@@ -192,7 +192,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
         else if (strncmp(message, "forced_recalibration/", 21) == 0) {
             int colonIndex = 0;
             for (int i = 21; i < length; i++) {
-                if (message[i] == ':') {
+                if (message[i] == '/') {
                     colonIndex = i;
                     break;
                 }
@@ -205,7 +205,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
                 uint16_t frc = 0;
                 co2_outside = atoi(message + colonIndex + 1);
                 char errorMessage[256];
-                uint16_t err = forcedRecalibration(scd4x, atoi(message + colonIndex + 1), frc);
+                uint16_t err = forcedRecalibration(scd4x, co2_outside, frc);
                 errorToString(err, errorMessage, 256);
                 DEBUG_PRINT("INFO: Forced recalibration performed with ");
                 DEBUG_PRINTLN(frc);
@@ -221,7 +221,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
                 }
 
                 if (frc !=  0xFFFF) {
-                    builder.addMessage("ACK").addMessage("co2:" + String(frc - 0x8000));
+                    builder.addMessage("ACK").addMessage("co2:" + String(frc - 0x8000)).addMessage("outside_co2:" + String(co2_outside));
                 } else {
                     builder.addMessage("NACK");
                 }

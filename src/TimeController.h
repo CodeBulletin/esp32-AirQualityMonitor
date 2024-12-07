@@ -14,7 +14,6 @@ int timeSyncFailureCount = 0;
 void syncFromNTP()
 {
     esp_netif_init();
-    setenv("TZ", TIME_ZONE, 1);
     if(sntp_enabled()){
         sntp_stop();
     }
@@ -44,8 +43,8 @@ String readTime() {
         return "Failed to obtain time";
     }
     char timeStr[50];
-    // dd-mm-yyyy hh:mm:ss.microsec
-    sprintf(timeStr, "%04d-%02d-%02d %02d:%02d:%02d.%06d", timeInfo.tm_year + 1900, timeInfo.tm_mon + 1, timeInfo.tm_mday, timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, 0);
+    // dd-mm-yyyy hh:mm:ss
+    sprintf(timeStr, "%04d-%02d-%02d %02d:%02d:%02d", timeInfo.tm_year + 1900, timeInfo.tm_mon + 1, timeInfo.tm_mday, timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);
     return String(timeStr);
 }
 
